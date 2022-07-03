@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -37,6 +39,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	private OrthographicCamera camera;
 	private List<Coin> coinList;
 	private Texture fon;
+	private PhysX physX;
+	private ShapeRenderer renderer;
 
 	private int[] foreGround, backGround;
 	private int score;
@@ -51,68 +55,31 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-
-		world = new World(new Vector2(0, -9.81f), true);
-		debugRender = new Box2DDebugRenderer();
-
-		BodyDef def = new BodyDef();
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape polygonShape = new PolygonShape();
-
-		def.position.set(new Vector2(88.67f, 150.00f ));
-		def.type = BodyDef.BodyType.StaticBody;
-		fdef.density = 0.1f;
-		fdef.friction = 0.1f;
-		fdef.restitution = 0.7f;
-
-		polygonShape.setAsBox(1000, 10);
-		fdef.shape = polygonShape;
-
-		world.createBody(def).createFixture(fdef);
-
-		def.type = BodyDef.BodyType.DynamicBody;
-		for (int i = 0; i < 10; i++) {
-			def.position.set(new Vector2(MathUtils.random(-88f, 88f), 350.00f));
-
-			def.gravityScale = MathUtils.random(0.5f, 5f);
-			float size = MathUtils.random(3, 15f);
-			polygonShape.setAsBox(size, size);
-			fdef.shape = polygonShape;
-			world.createBody(def).createFixture(fdef);
-		}
-
-		def.position.set(new Vector2(100, 155f));
-		def.gravityScale = 1f;
-		float size = 5f;
-		polygonShape.setAsBox(size, size);
-		fdef.shape = polygonShape;
-		fdef.density = 0.1f;
-		heroBody = world.createBody(def);
-		heroBody.createFixture(fdef);
-
-
-		polygonShape.dispose();
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		physX = new PhysX();
 
 		hero = new MyCharacter();
 		fon = new Texture("space fon.png");
 		map = new TmxMapLoader().load("maps/map2.tmx");
 		mapRenderer = new OrthogonalTiledMapRenderer(map);
-		batch = new SpriteBatch();
+		MapObject moHero = map.getLayers().get("Камера").getObjects().get("hero");
+		physX.addObject(moHero, hero.getRect(camera));
+
+		if (map.getLayers().get("land") != null) {
+			MapObjects mo = map.getLayers().get("land").getObjects();
+			physX.addObjects(mo);
+		}
+
 		foreGround = new int[1];
 		foreGround[0] = map.getLayers().getIndex("Объекты");
 		backGround = new int[2];
 		backGround[0] = map.getLayers().getIndex("Бэк");
 		backGround[1] = map.getLayers().getIndex("Земля");
 
-
+		batch = new SpriteBatch();
+		renderer = new ShapeRenderer();
 
 		label = new Label(50);
-		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.zoom = 0.25f;
-		RectangleMapObject o = (RectangleMapObject) map.getLayers().get("Камера").getObjects().get("камера");
-		camera.position.x = o.getRectangle().x;
-		camera.position.y = o.getRectangle().y;
-		camera.update();
 
 		coinList = new ArrayList<>();
 		MapLayer ml = map.getLayers().get("Монетки");
@@ -127,32 +94,38 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 		}
 
-
+		camera.zoom = 0.25f;
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 0, 0, 1);
 
+
 		hero.setWalk(false);
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			heroBody.applyForceToCenter(new Vector2(-500.0f, 0.0f), true);
+			physX.setHeroForce(new Vector2(-1500, 0));
+			camera.position.x--;
 			hero.setDir(true);
 			hero.setWalk(true);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			heroBody.applyForceToCenter(new Vector2(500.0f, 0.0f), true);
+			physX.setHeroForce(new Vector2(1500, 0));
+			camera.position.x--;
 			hero.setDir(false);
 			hero.setWalk(true);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)){
-			heroBody.applyForceToCenter(new Vector2(0.0f, 500.0f), true);
+			physX.setHeroForce(new Vector2(0, 2500));
+			camera.position.y++;
 			hero.setJump(true);
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) heroBody.applyForceToCenter(new Vector2(0.0f, -500.0f), true);;
-
-		camera.position.x = heroBody.getPosition().x;
-		camera.position.y = heroBody.getPosition().y;
+		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+			physX.setHeroForce(new Vector2(0, -2500));
+			camera.position.y--;
+		}
+		camera.position.x = physX.getHero().getPosition().x;
+		camera.position.y = physX.getHero().getPosition().y;
 		camera.update();
 
 		batch.begin();
@@ -164,20 +137,27 @@ public class MyGdxGame extends ApplicationAdapter {
 		mapRenderer.render(foreGround);
 
 		batch.begin();
-		batch.draw(hero.getFrame(), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+		batch.draw(hero.getFrame(), hero.getRect(camera).x, hero.getRect(camera).y, hero.getRect(camera).getWidth(), hero.getRect(camera).getHeight());
 		label.draw(batch, "МОНЕТОК СОБРАНО: " + String.valueOf(score), 0, 0);
 		for (int i = 0; i < coinList.size(); i++) {
 			coinList.get(i).draw(batch, camera);
-			if (coinList.get(i).isOverlaps(hero.getRect(), camera)) {
+			if (coinList.get(i).isOverlaps(hero.getRect(camera), camera)) {
 				coinList.remove(i);
 				score++;
 			}
 		}
 		batch.end();
 
-		world.step(1/60.f, 3, 3);
-		debugRender.render(world, camera.combined);
+		physX.step();
 
+		physX.debugDraw(camera);
+
+		renderer.begin(ShapeRenderer.ShapeType.Line);
+		for (Coin coin: coinList) {
+			coin.shapeDraw(renderer, camera);
+		}
+		hero.shapeDraw(renderer, camera);
+		renderer.end();
 	}
 	
 	@Override
@@ -185,5 +165,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.dispose();
 		coinList.get(0).dispose();
 		world.dispose();
+		physX.dispose();
 	}
 }

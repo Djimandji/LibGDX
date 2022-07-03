@@ -29,11 +29,11 @@ public class Coin {
 
     }
 
-//    public void shapeDraw(ShapeRenderer renderer, OrthographicCamera camera) {
-//        float cx = (rectangle.x - camera.position.x)/camera.zoom + Gdx.graphics.getWidth()/2;
-//        float cy = (rectangle.y - camera.position.y)/camera.zoom + Gdx.graphics.getHeight()/2;
-//        renderer.rect(cx, cy, rectangle.getWidth(), rectangle.getHeight());
-//    }
+    public void shapeDraw(ShapeRenderer renderer, OrthographicCamera camera) {
+        float cx = (rectangle.x - camera.position.x)/camera.zoom + Gdx.graphics.getWidth()/2;
+        float cy = (rectangle.y - camera.position.y)/camera.zoom + Gdx.graphics.getHeight()/2;
+        renderer.rect(cx, cy, rectangle.getWidth(), rectangle.getHeight());
+    }
 
     public boolean isOverlaps(Rectangle heroRect, OrthographicCamera camera){
         float cx = (rectangle.x - camera.position.x)/camera.zoom + Gdx.graphics.getWidth()/2;
