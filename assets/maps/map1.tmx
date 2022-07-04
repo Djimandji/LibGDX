@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.5" orientation="orthogonal" renderorder="right-down" width="118" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="11">
- <tileset firstgid="1" name="1626794363_10-kartinkin-com-p-piksel-art-taili-art-krasivo-10" tilewidth="16" tileheight="16" tilecount="4096" columns="64">
-  <image source="sheet.png" width="1024" height="1024"/>
+<map version="1.8" tiledversion="1.8.5" orientation="orthogonal" renderorder="right-down" width="118" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="18">
+ <tileset firstgid="1" name="1626794363_10-kartinkin-com-p-piksel-art-taili-art-krasivo-10" tilewidth="16" tileheight="16" tilecount="136" columns="17">
+  <image source="sheet.png" width="272" height="128"/>
  </tileset>
- <tileset firstgid="4097" name="sheet" tilewidth="16" tileheight="16" tilecount="136" columns="17">
+ <tileset firstgid="137" name="sheet" tilewidth="16" tileheight="16" tilecount="136" columns="17">
   <image source="sheet.png" width="272" height="128"/>
  </tileset>
  <layer id="11" name="Бэк" width="118" height="60">
   <data encoding="base64" compression="zlib">
-   eJzt1idPBFEUhuGh2w3d0xWG7pfq6Z7u6b+dz6xdsYTl3snzJK+a3OQkR8xpGgCA4RvpNM1oGkvjaSJNpqnOf0/Gb0xnfzNpNs2l+bSQFu21akvZ33JaSatpLa2nDXut2lb2t5120m7aS/vpwF6r1s3+DtNROk4n6TSdtXiv/W6K3rdS5hnUed5epMt0la7TTbpt8V773RS9b6XMM6i7vL1PD+kxPaXn9NLivZZ2U/zFPK95+5be00f6TF/pu8V7Le2mKG2eWpV2U5Q2T61KuylKm6dWpd0Upc1Tq9JuitLmAYCabfp/AgAAAAAAAAAAAAAAAAAAAAAAQ/IDm5801A==
-  </data>
- </layer>
- <layer id="10" name="Фон" width="118" height="60">
-  <data encoding="base64" compression="zlib">
-   eJzt1t1Nw1AQRGGX4AbcAiWkBOgAEBXAA9QfI4Ewjn+TzJ3x1fmkfYrkrPb4wU0DAAAAAADw5611b/Df9z5Tg3lzNxvOyXxDuu5H12P77O/wNXELutbpoV2fjq4QoGud6FonutYprWv38/9r3x28e8u2fLMvzWM/Twu/v294xsfGZw3fuYR3MNmtXV/6eZ1otDRzrcfPouv19jRM2W38Gy4dsat7r1qkdz3KpN6tNHcHumbslz6pdyvN3YGuGfulT+rdSnN3oGvGfumTerfS3B3omrFf+pTy3O6b0twdjto1nbsDXTXcHeiq4e5AVw13B7pquDvQVcPdga4a7g501XB3oKuGuwNddX7v4W5C1/tyt6CrhrsFXctx96GrhrsPXTXcfeiq4e5DVw13H7pquPvQVYMbAQAAAAAAeJwBqgkO8g==
-  </data>
- </layer>
- <layer id="7" name="Земля" width="118" height="60">
-  <data encoding="base64" compression="zlib">
-   eJzt2rtOwzAYQOGO0ClzS3mAlssLAELAyAADI0iUywgSIPX1sYUNVpqLLeIk/n0+yQoFiSY5xHFbJhMMZVYMvQeIYY+uItFVJrrKRFeZ6CoTXWWia1r069IdNXad7dQ0dB8v6JqU1K/DeeL7H0vqXfcT3/9QF+p4L9W4ajnuuq53iZyvnLrOzH3RZ6R+35TedeMcX+pzawhpXd117LTId+0qrSt+6K7ParwU22sK+/02m0h/G75rHGzzXUd0PeZmXmxby7jzaNNrMj7frvbU83lZm67rhuc9K/2s6Z6R05ooRFXXWPOrL7r+n+16rbZHA41jsw+H5nF5/aq7vtb0o2s12/V+wPNzbp67fJ1aC17D/LpRx3vrObQxd8Wfx8BzpLv2vYay6OqPrjLl2LX8ObhEOXbNAV1loqtMtqt9D99u695LehPYdal+30qNA0F/L7are2x2u6z5WlpXiULnYY2u4/ehztFn4PiiKzrUZ1eJ99yx4nqVia4yDdl1ZeZldI/rVSa6ykRXmcbUlXttd3TXh2IcXdEd3fWdrugJczIAAPGclP7/4JT7LgAAAAAAAAAggm8NW08Z
+   eJztmVdv1EAURocH+IH8AB74N3SSR7oIyQsthfJCF0SIXiTKAxACoiTUBEQnfKNkFOOsx561r+948h3laL1Zx5nkyOtrrTFEi4PaCyAiHNJeABGBXdOEXXXZBDfDLXAr3Aa3wx01j8uuuuyCu+EeuBfug/vhgZrHZVddDsMj8Cg8Bo/DUThW87jsqssZeBaeg+fhBXgRXqp5XHbV5Sa8BW/DO/AuvAfvF+xv70t3woHM4yCcyT0fFl11PXwzhXstlvX0y1P4DE7B53AavoAvC/a35+FMBSdrrEmSIeOfKdxrbSIx43yEn+BnOAfn4Rf4tWD/rncdMXIzRb+IrGcNvuA1bF6HN+BaPF8H/2D7b273oq5PTHe6Ss0U/SK1HnvNHKiovW6eqmCs11fbNXSmkKbJ9SxktlfT7Gq7hs4U0tRZT3aOHTTdmV2bxnYNnSmkiW09XcR2fQffm5Uzhft+GQvlu4ThmXFINarOEU1r76/s+2LZLJN9Hx3y/B38fLs3s8Z/n/YAPvS8/r3k560/Mseyj8Ml+0/mno941r+aZqIQenXdmNl+Dd+YlY18FrXOH4td5ch2rXLfJuHppd9/0izfG+a7fihYP7v2Jtu1bdzvvWp6n6dO25n3MIs8go8r6v5/61teY9WuXbEN3vaxrtmW1uZg13DYlV1T6Zr/HJxd0+iqbRuwK7uyK7s2iXTXcTgBTzR83Bi6Zv829zhesJ1a11TP1w2Bsmv8XX/CX4H+bmltDnZNE42uktdcsgjP1zRh1zSJoevEkuzaHDF05fnaPOyaJuyaJjF2rXOtJcu4rq9MHF15vjaD6/rNsGtKaLfwGfqeTPxo9+T5KoN2H3aVQbsPu8qg3SfvZfP/50BXCvYjfrQ78nyVQbsPu8rA/xEhhBBCCCGEEEKIDv8A9Krg1Q==
   </data>
  </layer>
  <layer id="9" name="Объекты" width="118" height="60">
   <data encoding="base64" compression="zlib">
-   eJzt2sEJgCAYgFE3qBEaqC5Bx1Zo/2MUdJUELdT3JhA/BX8wBAAAAEg3jX+vgFJmbZu061qtJdLu0LVKV9NYV6A8dxCAXpjx25Rrxvcmemf4aJ9yzPjmzfY8TXWlZ6vzDwAAAAAAAAAAAABw2/yvBgAAAAAAEp3lgwdH
+   eJzt2DEKwjAUBuAc0Cu4ObuJR/EKHsiMjl7B2Q4ODlJSSfro8/ugBNIhP/wE+loKAAAALHeNDsAwt+gADPGIDsDP6sy752op6KmW+V6B8dxBAP6FGT+nXjO+b6I2l/d6HnxOjxnfvNlmFx1ggVr02mofHYAh9JqTXnPSa056zUmvOek1J71uz+f/o8OXvdP0HNeLAwAAAAAAAAAkdI8OAAAAAAAAbM4LckUVrQ==
   </data>
  </layer>
  <objectgroup id="5" name="Камера">
