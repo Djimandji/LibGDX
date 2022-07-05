@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -41,6 +42,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	private Texture fon;
 	private PhysX physX;
 	private ShapeRenderer renderer;
+	private Music music;
 
 	private int[] foreGround, backGround;
 	private int score;
@@ -69,6 +71,10 @@ public class MyGdxGame extends ApplicationAdapter {
 			MapObjects mo = map.getLayers().get("land").getObjects();
 			physX.addObjects(mo);
 		}
+		if (map.getLayers().get("bombs") != null) {
+			MapObjects mo = map.getLayers().get("bombs").getObjects();
+			physX.addObjects(mo);
+		}
 
 		foreGround = new int[1];
 		foreGround[0] = map.getLayers().getIndex("Объекты");
@@ -95,6 +101,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		camera.zoom = 0.25f;
+
+		music = Gdx.audio.newMusic(Gdx.files.internal("Soundtrack.mp3"));
+		music.setLooping(true);
+		music.setVolume(0.05f);
+		music.play();
 	}
 
 	@Override
@@ -115,7 +126,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			hero.setDir(false);
 			hero.setWalk(true);
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)){
+		if (Gdx.input.isKeyPressed(Input.Keys.UP) && physX.cl.isOnGround()){
 			physX.setHeroForce(new Vector2(0, 2500));
 			camera.position.y++;
 			hero.setJump(true);
@@ -124,6 +135,10 @@ public class MyGdxGame extends ApplicationAdapter {
 			physX.setHeroForce(new Vector2(0, -2500));
 			camera.position.y--;
 		}
+
+		if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {camera.zoom += 0.05f;}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {camera.zoom -= 0.05f;}
+
 		camera.position.x = physX.getHero().getPosition().x;
 		camera.position.y = physX.getHero().getPosition().y;
 		camera.update();
@@ -140,10 +155,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.draw(hero.getFrame(), hero.getRect(camera).x, hero.getRect(camera).y, hero.getRect(camera).getWidth(), hero.getRect(camera).getHeight());
 		label.draw(batch, "МОНЕТОК СОБРАНО: " + String.valueOf(score), 0, 0);
 		for (int i = 0; i < coinList.size(); i++) {
-			coinList.get(i).draw(batch, camera);
+			int state;
+			state = coinList.get(i).draw(batch, camera);
 			if (coinList.get(i).isOverlaps(hero.getRect(camera), camera)) {
-				coinList.remove(i);
-				score++;
+				coinList.get(i).setState();
+				if (state == 1) {
+					coinList.remove(i);
+					score++;
+				}
 			}
 		}
 		batch.end();
@@ -163,8 +182,9 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		music.stop();
+		music.dispose();
 		coinList.get(0).dispose();
-		world.dispose();
 		physX.dispose();
 	}
 }

@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -11,7 +12,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -20,10 +27,13 @@ import java.util.Iterator;
 public class PhysX {
     private final World world;
     private final Box2DDebugRenderer debugRenderer;
+    public Contact cl;
     private Body hero;
 
     public PhysX() {
         world = new World(new Vector2(0, -9.81f), true);
+        cl = new Contact();
+        world.setContactListener(cl);
         debugRenderer = new Box2DDebugRenderer();
     }
 
@@ -72,13 +82,13 @@ public class PhysX {
 
             String name = (String)obj.getProperties().get("name");
             switch (name) {
-                case "rectWall":
+                case "wall":
                     RectangleMapObject rect = (RectangleMapObject) obj;
                     def.position.set(new Vector2(rect.getRectangle().x+rect.getRectangle().width/2 , rect.getRectangle().y+rect.getRectangle().height/2));
                     poly_h.setAsBox(rect.getRectangle().width/2 , rect.getRectangle().height/2);
                     fdef.shape = poly_h;
                     break;
-                case "circWall":
+                case "circle":
                     EllipseMapObject ellipseMapObject = (EllipseMapObject) obj;
                     def.position.set(new Vector2(ellipseMapObject.getEllipse().x+ellipseMapObject.getEllipse().width/2 , ellipseMapObject.getEllipse().y+ellipseMapObject.getEllipse().height/2));
                     circle.setRadius(ellipseMapObject.getEllipse().width/2);
@@ -87,6 +97,7 @@ public class PhysX {
                 default:
             }
 
+            def.awake = (boolean)obj.getProperties().get("awake");
             def.gravityScale = (float)obj.getProperties().get("gravityScale");
             fdef.restitution = (float)obj.getProperties().get("restitution");
             fdef.density = (float)obj.getProperties().get("density");
@@ -136,6 +147,7 @@ public class PhysX {
 
         def.gravityScale = (float)obj.getProperties().get("gravityScale");
 
+
         fdef.restitution = (float)obj.getProperties().get("restitution");
         fdef.density = (float)obj.getProperties().get("density");
         fdef.friction = (float)obj.getProperties().get("friction");
@@ -143,6 +155,16 @@ public class PhysX {
         if (obj.getName().equals("hero")) {
             hero = world.createBody(def);
             hero.createFixture(fdef).setUserData(name);
+            poly_h.setAsBox(rect.width/2*0.6f, rect.height/2*0.6f, new Vector2(0,-rect.height*0.3f),0);
+            fdef.shape = poly_h;
+            fdef.isSensor = true;
+            hero.createFixture(fdef).setUserData("sensor");
+
+            poly_h.setAsBox(rect.width/2*0.1f, rect.height/2*5.0f, new Vector2(0,rect.height*2.5f),0);
+            fdef.shape = poly_h;
+            fdef.isSensor = true;
+            hero.createFixture(fdef).setUserData("triger");
+
         } else {
             world.createBody(def).createFixture(fdef).setUserData(name);
         }
@@ -150,4 +172,69 @@ public class PhysX {
         poly_h.dispose();
         circle.dispose();
     }
+
+    public class Contact implements ContactListener {
+        private int count;
+
+        public boolean isOnGround() {return count>0;}
+
+        @Override
+        public void beginContact(com.badlogic.gdx.physics.box2d.Contact contact) {
+            Fixture fa = contact.getFixtureA();
+            Fixture fb = contact.getFixtureB();
+
+            if (fa.getUserData() != null) {
+                String s = (String)fa.getUserData();
+                if (s.contains("sensor")){
+                    count++;
+                }
+                if (s.contains("triger")){
+                    fb.getBody().setAwake(true);
+                }
+            }
+
+            if (fb.getUserData() != null) {
+                String s = (String)fb.getUserData();
+                if (s.contains("sensor")){
+                    count++;
+                }
+                if (s.contains("triger")){
+                    fa.getBody().setAwake(true);
+                }
+            }
+
+        }
+
+        @Override
+        public void endContact(com.badlogic.gdx.physics.box2d.Contact contact) {
+
+            Fixture fa = contact.getFixtureA();
+            Fixture fb = contact.getFixtureB();
+
+            if (fa.getUserData() != null) {
+                String s = (String)fa.getUserData();
+                if (s.contains("sensor")){
+                    count--;
+                }
+            }
+
+            if (fb.getUserData() != null) {
+                String s = (String)fb.getUserData();
+                if (s.contains("sensor")){
+                    count--;
+                }
+            }
+        }
+
+        @Override
+        public void preSolve(com.badlogic.gdx.physics.box2d.Contact contact, Manifold oldManifold) {
+
+        }
+
+        @Override
+        public void postSolve(com.badlogic.gdx.physics.box2d.Contact contact, ContactImpulse impulse) {
+
+        }
+    }
+
 }
